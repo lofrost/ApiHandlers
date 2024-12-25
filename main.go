@@ -9,12 +9,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type requestBody struct {
-	Msg string `json:"message"`
-}
-
-var task string
-
 func PostHandler(w http.ResponseWriter, r *http.Request) {
 	d := json.NewDecoder(r.Body)
 
