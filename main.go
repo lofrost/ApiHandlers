@@ -9,7 +9,6 @@ import (
 )
 
 type newreq struct {
-	ID     int    `json:"id"`
 	Task   string `json:"task"`
 	IsDone *bool  `json:"is_done"`
 }
@@ -54,9 +53,10 @@ func GetHandler(w http.ResponseWriter, r *http.Request) {
 
 func PatchHandler(w http.ResponseWriter, r *http.Request) {
 	var req newreq
+	id := mux.Vars(r)["id"]
 	w.Header().Set("Content-Type", "application/json")
 	json.NewDecoder(r.Body).Decode(&req)
-	result := DB.Model(&Message{}).Where("ID = ?", req.ID).Updates(&req)
+	result := DB.Model(&Message{}).Where("ID = ?", id).Updates(&req)
 	if result.Error != nil {
 		resp := Response{
 			Status:  "error",
@@ -73,17 +73,16 @@ func PatchHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	} else {
 		var UpdatedMessage Message
-		DB.Model(&Message{}).Where("ID = ?", req.ID).First(&UpdatedMessage)
+		DB.Model(&Message{}).Where("ID = ?", id).First(&UpdatedMessage)
 		json.NewEncoder(w).Encode(UpdatedMessage)
 	}
 
 }
 
 func DeleteHandler(w http.ResponseWriter, r *http.Request) {
-	var req newreq
-	json.NewDecoder(r.Body).Decode(&req)
+	id := mux.Vars(r)["id"]
 	w.Header().Set("Content-Type", "application/json")
-	result := DB.Where("ID = ?", req.ID).Delete(&Message{})
+	result := DB.Where("ID = ?", id).Delete(&Message{})
 	if result.Error != nil {
 		resp := Response{
 			Status:  "error",
@@ -115,8 +114,8 @@ func main() {
 
 	router.HandleFunc("/api/create", PostHandler).Methods("POST")
 	router.HandleFunc("/api/task", GetHandler).Methods("GET")
-	router.HandleFunc("/api/update", PatchHandler).Methods("PATCH")
-	router.HandleFunc("/api/delete", DeleteHandler).Methods("DELETE")
+	router.HandleFunc("/api/update/{id}", PatchHandler).Methods("PATCH")
+	router.HandleFunc("/api/delete/{id}", DeleteHandler).Methods("DELETE")
 
 	http.ListenAndServe(":8080", router)
 
