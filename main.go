@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -15,40 +14,67 @@ type newreq struct {
 	IsDone *bool  `json:"is_done"`
 }
 
+type Response struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+}
+
 func PostHandler(w http.ResponseWriter, r *http.Request) {
 	var req Message
 	json.NewDecoder(r.Body).Decode(&req)
+	w.Header().Set("Content-Type", "application/json")
 	err := DB.Create(&req).Error
 	if err != nil {
-		log.Fatal("Failed to create Task in DB")
+		resp := Response{
+			Status:  "error",
+			Message: "Failed to create Task in DB",
+		}
+		json.NewEncoder(w).Encode(resp)
 		return
 	}
-	fmt.Fprintln(w, "Task succesfully created")
+	task, err := json.Marshal(req)
+	if err != nil {
+		log.Fatal("Error with json.Marshal")
+		return
+	}
+	w.Write(task)
 }
 
 func GetHandler(w http.ResponseWriter, r *http.Request) {
 	var tasks []Message
 	DB.Find(&tasks)
-	for _, task := range tasks {
-		jsontask, err := json.Marshal(task)
-		if err != nil {
-			fmt.Fprintln(w, "Error with json.Marshal:", err)
-			return
-		}
-		fmt.Fprintln(w, string(jsontask))
+	jsontasks, err := json.Marshal(tasks)
+	if err != nil {
+		log.Fatal("Error with json.Marshal")
+		return
 	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsontasks)
 }
 
 func PatchHandler(w http.ResponseWriter, r *http.Request) {
 	var req newreq
-
+	w.Header().Set("Content-Type", "application/json")
 	json.NewDecoder(r.Body).Decode(&req)
 	result := DB.Model(&Message{}).Where("ID = ?", req.ID).Updates(&req)
 	if result.Error != nil {
-		fmt.Fprintln(w, "User not found:", result.Error)
+		resp := Response{
+			Status:  "error",
+			Message: "DB error:" + result.Error.Error(),
+		}
+		json.NewEncoder(w).Encode(resp)
+		return
+	} else if result.RowsAffected == 0 {
+		resp := Response{
+			Status:  "error",
+			Message: "Task not found",
+		}
+		json.NewEncoder(w).Encode(resp)
 		return
 	} else {
-		fmt.Fprintln(w, "Succesfully updated")
+		var UpdatedMessage Message
+		DB.Model(&Message{}).Where("ID = ?", req.ID).First(&UpdatedMessage)
+		json.NewEncoder(w).Encode(UpdatedMessage)
 	}
 
 }
@@ -56,13 +82,28 @@ func PatchHandler(w http.ResponseWriter, r *http.Request) {
 func DeleteHandler(w http.ResponseWriter, r *http.Request) {
 	var req newreq
 	json.NewDecoder(r.Body).Decode(&req)
-
+	w.Header().Set("Content-Type", "application/json")
 	result := DB.Where("ID = ?", req.ID).Delete(&Message{})
 	if result.Error != nil {
-		fmt.Fprintln(w, "Error with deleting user:", result.Error)
+		resp := Response{
+			Status:  "error",
+			Message: "DB error:" + result.Error.Error(),
+		}
+		json.NewEncoder(w).Encode(resp)
+		return
+	} else if result.RowsAffected == 0 {
+		resp := Response{
+			Status:  "error",
+			Message: "Task not found",
+		}
+		json.NewEncoder(w).Encode(resp)
 		return
 	} else {
-		fmt.Fprintf(w, "%v rows deleted", result.RowsAffected)
+		resp := Response{
+			Status:  "success",
+			Message: "Task deleted",
+		}
+		json.NewEncoder(w).Encode(resp)
 	}
 }
 
