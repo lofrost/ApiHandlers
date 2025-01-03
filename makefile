@@ -11,5 +11,10 @@ migrate:
 migrate-down:
 	$(MIGRATE) down
 
+fastgit:
+	git add .
+	git commit -m "fastfix"
+	git push origin main
+
 run:
 	go run cmd/app/main.go
