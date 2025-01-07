@@ -11,6 +11,15 @@ type Handler struct {
 	Service *taskService.TaskService
 }
 
+func (h *Handler) DeleteTaskByID(ctx context.Context, request tasks.DeleteTaskByIDRequestObject) (tasks.DeleteTaskByIDResponseObject, error) {
+	err := h.Service.DeleteTaskByID(request.TaskId)
+	if err != nil {
+		return nil, err
+	}
+
+	return nil, nil
+}
+
 func NewHandler(service *taskService.TaskService) *Handler {
 	return &Handler{
 		Service: service,
@@ -54,18 +63,6 @@ func (h *Handler) PostTasks(ctx context.Context, request tasks.PostTasksRequestO
 		IsDone: createdTask.IsDone,
 	}
 
-	return response, nil
-}
-
-func (h *Handler) DeleteTaskByID(ctx context.Context, request tasks.DeleteTaskByIDRequestObject) (tasks.DeleteTaskByIDResponseObject, error) {
-	err := h.Service.DeleteTaskByID(request.TaskId)
-	if err != nil {
-		return nil, err
-	}
-	status := "Succesfully"
-	response := tasks.DeleteTaskByID200JSONResponse{
-		Status: &status,
-	}
 	return response, nil
 }
 

@@ -14,11 +14,6 @@ import (
 	strictecho "github.com/oapi-codegen/runtime/strictmiddleware/echo"
 )
 
-// Status defines model for Status.
-type Status struct {
-	Status *string `json:"status,omitempty"`
-}
-
 // Task defines model for Task.
 type Task struct {
 	Id     *uint   `json:"id,omitempty"`
@@ -179,13 +174,12 @@ type DeleteTaskByIDResponseObject interface {
 	VisitDeleteTaskByIDResponse(w http.ResponseWriter) error
 }
 
-type DeleteTaskByID200JSONResponse Status
+type DeleteTaskByID204Response struct {
+}
 
-func (response DeleteTaskByID200JSONResponse) VisitDeleteTaskByIDResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-
-	return json.NewEncoder(w).Encode(response)
+func (response DeleteTaskByID204Response) VisitDeleteTaskByIDResponse(w http.ResponseWriter) error {
+	w.WriteHeader(204)
+	return nil
 }
 
 type UpdateTaskByIDRequestObject struct {

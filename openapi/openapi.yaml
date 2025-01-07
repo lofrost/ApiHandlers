@@ -50,12 +50,8 @@ paths:
             type: integer
             format: uint
       responses:
-        '200':
+        '204':
           description: Task Deleted
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
     patch:
       summary: Update a task by ID
       tags:
@@ -96,8 +92,3 @@ components:
           type: string
         is_done:
           type: boolean
-    Status:
-      type: object
-      properties:
-        status:
-          type: string
