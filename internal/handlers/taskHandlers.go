@@ -83,5 +83,5 @@ func (h *Handler) DeleteTaskByID(ctx context.Context, request tasks.DeleteTaskBy
 		return nil, err
 	}
 
-	return nil, nil
+	return tasks.DeleteTaskByID204Response{}, nil
 }
