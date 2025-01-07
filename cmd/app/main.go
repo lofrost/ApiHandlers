@@ -13,7 +13,10 @@ import (
 
 func main() {
 	database.InitDB()
-	database.DB.AutoMigrate(&taskService.Task{})
+	err := database.DB.AutoMigrate(&taskService.Task{})
+	if err != nil {
+		log.Fatal("Failed to start with err:", err)
+	}
 
 	repo := taskService.NewTaskRepository(database.DB)
 	service := taskService.NewService(repo)
@@ -28,8 +31,8 @@ func main() {
 
 	tasks.RegisterHandlers(e, strictHandler)
 
-	if err := e.Start(":8080"); err != nil {
-		log.Fatal("Failed to start with err: %v", err)
+	if err = e.Start(":8080"); err != nil {
+		log.Fatal("Failed to start with err:", err)
 	}
 
 	//router := mux.NewRouter()
