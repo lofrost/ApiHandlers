@@ -1,9 +1,8 @@
-CREATE TABLE tasks (
+CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    task VARCHAR(255) NOT NULL,
-    is_done BOOLEAN DEFAULT FALSE,
+    email VARCHAR(50) NOT NULL,
+    password VARCHAR(50) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     deleted_at TIMESTAMP DEFAULT NULL
 );
-

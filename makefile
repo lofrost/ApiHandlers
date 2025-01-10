@@ -13,11 +13,12 @@ migrate-down:
 
 fastgit:
 	git add .
-	git commit -m "fastfix"
+	git commit -m "${MESSAGE}"
 	git push origin main
 
 gen:
-	oapi-codegen -config openapi/.openapi -include-tags tasks -package tasks openapi/openapi.yaml > ./internal/web/tasks/api.gen.go
+	oapi-codegen -config openapi/.openapi -include-tags tasks -package tasks openapi/openapi.yaml > ./internal/web/tasks/tasks.gen.go
+	oapi-codegen -config openapi/.openapi -include-tags users -package users openapi/openapi.yaml > ./internal/web/users/users.gen.go
 
 lint:
 	golangci-lint run --out-format=colored-line-number	

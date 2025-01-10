@@ -7,17 +7,17 @@ import (
 	"Test.go/internal/web/tasks"
 )
 
-type Handler struct {
+type taskHandler struct {
 	Service *taskService.TaskService
 }
 
-func NewHandler(service *taskService.TaskService) *Handler {
-	return &Handler{
+func NewTaskHandler(service *taskService.TaskService) *taskHandler {
+	return &taskHandler{
 		Service: service,
 	}
 }
 
-func (h *Handler) GetTasks(ctx context.Context, request tasks.GetTasksRequestObject) (tasks.GetTasksResponseObject, error) {
+func (h *taskHandler) GetTasks(ctx context.Context, request tasks.GetTasksRequestObject) (tasks.GetTasksResponseObject, error) {
 	allTasks, err := h.Service.GetAllTasks()
 	if err != nil {
 		return nil, err
@@ -36,7 +36,7 @@ func (h *Handler) GetTasks(ctx context.Context, request tasks.GetTasksRequestObj
 	return response, nil
 }
 
-func (h *Handler) PostTasks(ctx context.Context, request tasks.PostTasksRequestObject) (tasks.PostTasksResponseObject, error) {
+func (h *taskHandler) PostTasks(ctx context.Context, request tasks.PostTasksRequestObject) (tasks.PostTasksResponseObject, error) {
 	taskRequest := request.Body
 
 	taskToCreate := taskService.Task{
@@ -57,7 +57,7 @@ func (h *Handler) PostTasks(ctx context.Context, request tasks.PostTasksRequestO
 	return response, nil
 }
 
-func (h *Handler) UpdateTaskByID(ctx context.Context, request tasks.UpdateTaskByIDRequestObject) (tasks.UpdateTaskByIDResponseObject, error) {
+func (h *taskHandler) UpdateTaskByID(ctx context.Context, request tasks.UpdateTaskByIDRequestObject) (tasks.UpdateTaskByIDResponseObject, error) {
 	taskRequest := request.Body
 
 	instanceUpdateTask := taskService.Task{
@@ -77,11 +77,10 @@ func (h *Handler) UpdateTaskByID(ctx context.Context, request tasks.UpdateTaskBy
 	return response, nil
 }
 
-func (h *Handler) DeleteTaskByID(ctx context.Context, request tasks.DeleteTaskByIDRequestObject) (tasks.DeleteTaskByIDResponseObject, error) {
+func (h *taskHandler) DeleteTaskByID(ctx context.Context, request tasks.DeleteTaskByIDRequestObject) (tasks.DeleteTaskByIDResponseObject, error) {
 	err := h.Service.DeleteTaskByID(request.TaskId)
 	if err != nil {
-		return nil, err
+		return tasks.DeleteTaskByID204Response{}, err
 	}
-
 	return tasks.DeleteTaskByID204Response{}, nil
 }
