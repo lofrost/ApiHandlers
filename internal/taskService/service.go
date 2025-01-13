@@ -1,5 +1,7 @@
 package taskService
 
+import . "Test.go/internal/models"
+
 type TaskService struct {
 	repo TaskRepository
 }
@@ -22,4 +24,8 @@ func (s *TaskService) UpdateTaskByID(id uint, task Task) (Task, error) {
 
 func (s *TaskService) DeleteTaskByID(id uint) error {
 	return s.repo.DeleteTaskByID(id)
+}
+
+func (s *TaskService) GetTasksByUserID(id uint) ([]Task, error) {
+	return s.repo.GetTasksByUserID(id)
 }

@@ -1,6 +1,9 @@
 package taskService
 
-import "gorm.io/gorm"
+import (
+	. "Test.go/internal/models"
+	"gorm.io/gorm"
+)
 
 type TaskRepository interface {
 	CreateTask(task Task) (Task, error)
@@ -10,6 +13,8 @@ type TaskRepository interface {
 	UpdateTaskByID(id uint, task Task) (Task, error)
 
 	DeleteTaskByID(id uint) error
+
+	GetTasksByUserID(id uint) ([]Task, error)
 }
 
 type taskRepository struct {
@@ -47,4 +52,10 @@ func (r *taskRepository) UpdateTaskByID(id uint, task Task) (Task, error) {
 func (r *taskRepository) DeleteTaskByID(id uint) error {
 	result := r.db.Where("ID = ?", id).Delete(&Task{})
 	return result.Error
+}
+
+func (r *taskRepository) GetTasksByUserID(id uint) ([]Task, error) {
+	var user User
+	err := r.db.Preload("Tasks").First(&user, "id = ?", id).Error
+	return user.Tasks, err
 }

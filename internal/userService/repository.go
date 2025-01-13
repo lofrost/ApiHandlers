@@ -1,6 +1,9 @@
 package userservice
 
-import "gorm.io/gorm"
+import (
+	. "Test.go/internal/models"
+	"gorm.io/gorm"
+)
 
 type UserRepository interface {
 	CreateUser(user User) (User, error)

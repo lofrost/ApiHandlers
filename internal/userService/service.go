@@ -1,5 +1,7 @@
 package userservice
 
+import . "Test.go/internal/models"
+
 type UserService struct {
 	repo UserRepository
 }

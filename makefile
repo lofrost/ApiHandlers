@@ -11,6 +11,12 @@ migrate:
 migrate-down:
 	$(MIGRATE) down
 
+migrate-version:
+	$(MIGRATE) version
+
+migrate-fix:
+	$(MIGRATE) force ${VERSION}
+
 fastgit:
 	git add .
 	git commit -m "${MESSAGE}"

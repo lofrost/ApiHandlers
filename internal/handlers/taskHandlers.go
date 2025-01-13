@@ -3,12 +3,31 @@ package handlers
 import (
 	"context"
 
+	"Test.go/internal/models"
 	"Test.go/internal/taskService"
 	"Test.go/internal/web/tasks"
 )
 
 type taskHandler struct {
 	Service *taskService.TaskService
+}
+
+func (h *taskHandler) GetTasksByUserID(ctx context.Context, request tasks.GetTasksByUserIDRequestObject) (tasks.GetTasksByUserIDResponseObject, error) {
+	Alltasks, err := h.Service.GetTasksByUserID(request.UserId)
+	if err != nil {
+		return nil, err
+	}
+	response := tasks.GetTasksByUserID200JSONResponse{}
+	for _, tsk := range Alltasks {
+		task := tasks.Task{
+			Id:     &tsk.ID,
+			Task:   &tsk.Task,
+			IsDone: tsk.IsDone,
+			UserId: &tsk.User_ID,
+		}
+		response = append(response, task)
+	}
+	return response, nil
 }
 
 func NewTaskHandler(service *taskService.TaskService) *taskHandler {
@@ -29,6 +48,7 @@ func (h *taskHandler) GetTasks(ctx context.Context, request tasks.GetTasksReques
 			Id:     &tsk.ID,
 			Task:   &tsk.Task,
 			IsDone: tsk.IsDone,
+			UserId: &tsk.User_ID,
 		}
 		response = append(response, task)
 	}
@@ -39,9 +59,10 @@ func (h *taskHandler) GetTasks(ctx context.Context, request tasks.GetTasksReques
 func (h *taskHandler) PostTasks(ctx context.Context, request tasks.PostTasksRequestObject) (tasks.PostTasksResponseObject, error) {
 	taskRequest := request.Body
 
-	taskToCreate := taskService.Task{
-		Task:   *taskRequest.Task,
-		IsDone: taskRequest.IsDone,
+	taskToCreate := models.Task{
+		Task:    *taskRequest.Task,
+		IsDone:  taskRequest.IsDone,
+		User_ID: *taskRequest.UserId,
 	}
 	createdTask, err := h.Service.CreateTask(taskToCreate)
 	if err != nil {
@@ -52,6 +73,7 @@ func (h *taskHandler) PostTasks(ctx context.Context, request tasks.PostTasksRequ
 		Id:     &createdTask.ID,
 		Task:   &createdTask.Task,
 		IsDone: createdTask.IsDone,
+		UserId: &createdTask.User_ID,
 	}
 
 	return response, nil
@@ -60,9 +82,10 @@ func (h *taskHandler) PostTasks(ctx context.Context, request tasks.PostTasksRequ
 func (h *taskHandler) UpdateTaskByID(ctx context.Context, request tasks.UpdateTaskByIDRequestObject) (tasks.UpdateTaskByIDResponseObject, error) {
 	taskRequest := request.Body
 
-	instanceUpdateTask := taskService.Task{
-		Task:   *taskRequest.Task,
-		IsDone: taskRequest.IsDone,
+	instanceUpdateTask := models.Task{
+		Task:    *taskRequest.Task,
+		IsDone:  taskRequest.IsDone,
+		User_ID: *taskRequest.UserId,
 	}
 	updatedTask, err := h.Service.UpdateTaskByID(request.TaskId, instanceUpdateTask)
 	if err != nil {
@@ -72,6 +95,7 @@ func (h *taskHandler) UpdateTaskByID(ctx context.Context, request tasks.UpdateTa
 		Id:     &updatedTask.ID,
 		Task:   &updatedTask.Task,
 		IsDone: updatedTask.IsDone,
+		UserId: &updatedTask.User_ID,
 	}
 
 	return response, nil

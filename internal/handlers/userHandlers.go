@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 
+	"Test.go/internal/models"
 	userservice "Test.go/internal/userService"
 	"Test.go/internal/web/users"
 )
@@ -38,7 +39,7 @@ func (u *userHandler) GetUsers(ctx context.Context, request users.GetUsersReques
 
 func (u *userHandler) PatchUserByID(ctx context.Context, request users.PatchUserByIDRequestObject) (users.PatchUserByIDResponseObject, error) {
 	userRequest := request.Body
-	userInstance := userservice.User{
+	userInstance := models.User{
 		Email:    *userRequest.Email,
 		Password: *userRequest.Password,
 	}
@@ -57,7 +58,7 @@ func (u *userHandler) PatchUserByID(ctx context.Context, request users.PatchUser
 
 func (u *userHandler) PostUser(ctx context.Context, request users.PostUserRequestObject) (users.PostUserResponseObject, error) {
 	requestUser := request.Body
-	userToCreate := userservice.User{
+	userToCreate := models.User{
 		Email:    *requestUser.Email,
 		Password: *requestUser.Password,
 	}

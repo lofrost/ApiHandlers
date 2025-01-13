@@ -77,6 +77,28 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Task"
+  /tasks/usertasks/{user_id}:
+    get:
+      summary: Get all user tasks by ID
+      tags:
+        - tasks
+      operationId: GetTasksByUserID
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: uint
+      responses:
+        '200':
+          description: A list of user tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Task"
   /users:
     get:
       summary: Get all users
@@ -125,7 +147,7 @@ paths:
       parameters:
         - name: user_id
           in: path
-          reqired: true
+          required: true
           schema:
             type: integer
             format: uint
@@ -167,6 +189,9 @@ components:
           type: string
         is_done:
           type: boolean
+        user_id:
+          type: integer
+          format: uint
     User:
       type: object
       properties:

@@ -5,6 +5,7 @@ import (
 
 	"Test.go/internal/database"
 	"Test.go/internal/handlers"
+	"Test.go/internal/models"
 	"Test.go/internal/taskService"
 	userservice "Test.go/internal/userService"
 	"Test.go/internal/web/tasks"
@@ -15,7 +16,7 @@ import (
 
 func main() {
 	database.InitDB()
-	err := database.DB.AutoMigrate(&taskService.Task{})
+	err := database.DB.AutoMigrate(&models.Task{}, &models.User{})
 	if err != nil {
 		log.Fatal("Failed to start with err:", err)
 	}

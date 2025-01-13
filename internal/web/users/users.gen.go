@@ -183,7 +183,7 @@ func (response DeleteUserByID204Response) VisitDeleteUserByIDResponse(w http.Res
 }
 
 type PatchUserByIDRequestObject struct {
-	UserId uint `json:"user_id,omitempty"`
+	UserId uint `json:"user_id"`
 	Body   *PatchUserByIDJSONRequestBody
 }
 
