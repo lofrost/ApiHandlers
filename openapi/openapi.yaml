@@ -77,7 +77,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Task"
-  /tasks/usertasks/{user_id}:
+  /user/{user_id}/tasks:
     get:
       summary: Get all user tasks by ID
       tags:

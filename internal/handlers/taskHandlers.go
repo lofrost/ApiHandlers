@@ -23,7 +23,6 @@ func (h *taskHandler) GetTasksByUserID(ctx context.Context, request tasks.GetTas
 			Id:     &tsk.ID,
 			Task:   &tsk.Task,
 			IsDone: tsk.IsDone,
-			UserId: &tsk.User_ID,
 		}
 		response = append(response, task)
 	}
